@@ -21,10 +21,11 @@ const Login = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const navigate = useNavigate();
 
+  // Handle Google Sign-In
   const handleGoogleSignIn = async () => {
     try {
       await googleSignIn();
-      setSnackbarMessage("Login successful");
+      setSnackbarMessage("Logging in");
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
     } catch (error) {
@@ -34,58 +35,65 @@ const Login = () => {
     }
   };
 
+  // Redirect to dashboard if user is already logged in
   useEffect(() => {
     if (user != null) {
       navigate("/dashboard");
     }
   }, [user]);
 
+  // Responsive design breakpoints
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const headingStyle = {
-    fontSize: "33px",
-    fontWeight: 500,
-    lineHeight: "39px",
-    letterSpacing: "0em",
-  };
-
-  const descriptionStyle = {
-    color: "rgba(0, 0, 0, 0.55)",
-    fontSize: "20px",
-    fontWeight: 400,
-    lineHeight: "30px",
-    letterSpacing: "0em",
-    paddingLeft: isSmallScreen ? "20px" : "40px",
-    paddingRight: isSmallScreen ? "20px" : "40px",
-    textAlign: "center",
+  // Styles
+  const styles = {
+    heading: {
+      fontSize: "33px",
+      fontWeight: 500,
+      lineHeight: "39px",
+      letterSpacing: "0em",
+    },
+    description: {
+      color: "rgba(0, 0, 0, 0.55)",
+      fontSize: "20px",
+      fontWeight: 400,
+      lineHeight: "30px",
+      letterSpacing: "0em",
+      paddingLeft: isSmallScreen ? "20px" : "40px",
+      paddingRight: isSmallScreen ? "20px" : "40px",
+      textAlign: "center",
+    },
+    logo: {
+      width: isSmallScreen ? "30px" : "35px",
+      height: "auto",
+      position: "absolute",
+      top: isSmallScreen ? "20px" : "30px",
+      left: isSmallScreen ? "20px" : "30px",
+      transform: "none",
+    },
   };
 
   return (
     <>
+      {/* Login Grid */}
       <Grid container spacing={2} justifyContent="center" alignItems="center">
+        {/* Left Column (Login Form) */}
         <Grid item xs={12} sm={6}>
           <div style={{ textAlign: "center" }}>
-            <img
-              src={Logo}
-              alt="Logo"
-              style={{
-                width: isSmallScreen ? "30px" : "44px",
-                height: isSmallScreen ? "44.4px" : "65.76px",
-                position: "absolute",
-                top: isSmallScreen ? "20px" : "80px",
-                left: isSmallScreen ? "calc(50% - 15px)" : "108px",
-                transform: isSmallScreen ? "translateX(-50%)" : "none",
-              }}
-            />
-            <Typography variant="h4" gutterBottom style={headingStyle}>
+            {/* Logo */}
+            <img src={Logo} alt="Logo" style={styles.logo} />
+            {/* Login Title */}
+            <Typography variant="h4" gutterBottom style={styles.heading}>
               LOGIN
             </Typography>
-            <Typography variant="body1" paragraph style={descriptionStyle}>
+            {/* Login Description */}
+            <Typography variant="body1" paragraph style={styles.description}>
               Welcome to our Todo application! Log in to your account
               effortlessly and take control of your tasks. Your secure gateway
               to organized living awaits.
             </Typography>
+            {/* Google Sign-In Button */}
             <Button
               variant="contained"
               color="primary"
@@ -104,6 +112,7 @@ const Login = () => {
           </div>
         </Grid>
 
+        {/* Right Column (Background Image) - Displayed only on larger screens */}
         {!isSmallScreen && (
           <Grid item xs={12} sm={6}>
             <img
@@ -114,6 +123,8 @@ const Login = () => {
           </Grid>
         )}
       </Grid>
+
+      {/* Custom Snackbar for displaying messages */}
       <CustomSnackbar
         open={snackbarOpen}
         message={snackbarMessage}

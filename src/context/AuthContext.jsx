@@ -6,7 +6,13 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { auth, firestore } from "../firebase";
-import { collection, addDoc, doc, deleteDoc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  doc,
+  deleteDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 
 const AuthContext = createContext();
 
@@ -32,6 +38,7 @@ export const AuthContextProvider = ({ children }) => {
         completed: false,
         favourite: false,
         userUid,
+        timestamp: serverTimestamp(), //server timestamp for tracking creation time
       });
     } catch (error) {
       console.error("Error adding task: ", error);
@@ -50,7 +57,7 @@ export const AuthContextProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      console.log("User: ", currentUser); //to check if its working
+      console.log("User: ", currentUser); //to check user is logged in
     });
     return () => {
       unsubscribe();
