@@ -1,2 +1,2 @@
 # TODO-App
-This app created using react.js and firebase
+This app is created using react.js and firebase
