@@ -3,6 +3,8 @@ Title: React + Vite Todo App with Firebase Authentication and MUI
 Description:
 Create, organize, and conquer your tasks seamlessly with the React + Vite Todo App. This feature-rich task management application leverages Firebase for secure Google authentication and real-time data storage. The app, enhanced with Material-UI (MUI) components, offers an intuitive and visually appealing user interface.
 
+The code is well structured and suitably commented so to understand and have insights about code functioning.
+
 Key Features:-
 
 1.Google Authentication:
