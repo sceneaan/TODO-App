@@ -18,7 +18,6 @@ import { useNavigate } from "react-router-dom";
 import Logo from "../assets/logo.png";
 import SearchComponent from "../components/Search";
 import DeleteIcon from "@mui/icons-material/Delete";
-// import EditIcon from "@mui/icons-material/Edit";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import {
   collection,
@@ -33,16 +32,21 @@ import CustomSnackbar from "../components/CustomSnackbar";
 
 const Dashboard = () => {
   const { user, logOut, addTask, deleteTask } = UserAuth();
-  const navigate = useNavigate();
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarKey, setSnackbarKey] = useState(null);
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const navigate = useNavigate();
 
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   const headingStyle = {
     fontSize: "33px",
@@ -78,11 +82,16 @@ const Dashboard = () => {
       if (title && description) {
         addTask(title, description);
         const key = new Date().getTime();
+        setSnackbarSeverity("success");
         setSnackbarMessage("Task added successfully");
         setSnackbarOpen(true);
         setSnackbarKey(key);
+        setTitle("");
+        setDescription("");
       } else {
-        console.log("Failed to add task");
+        setSnackbarSeverity("error");
+        setSnackbarMessage("Failed to add task. Please fill in all fields.");
+        setSnackbarOpen(true);
       }
     } catch (error) {
       console.log(error);
@@ -92,10 +101,13 @@ const Dashboard = () => {
   const handleDeleteTask = async (taskId) => {
     try {
       await deleteTask(taskId);
+      setSnackbarSeverity("success");
       setSnackbarMessage("Task deleted successfully");
       setSnackbarOpen(true);
     } catch (error) {
-      console.error("Error deleting task: ", error);
+      setSnackbarSeverity("error");
+      setSnackbarMessage("Failed to delete task.");
+      setSnackbarOpen(true);
     }
   };
 
@@ -189,10 +201,9 @@ const Dashboard = () => {
     setSnackbarOpen(false);
   };
 
-  const [currentPage, setCurrentPage] = useState(1);
   const tasksPerPage = 5;
 
-  const handlePageChange = (event, newPage) => {
+  const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
 
@@ -212,17 +223,25 @@ const Dashboard = () => {
         justifyContent="center"
         alignItems="center"
       >
-        <Grid item xs={12} sm={6} sx={{ borderRight: "1px solid gray" }}>
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          sx={{
+            // borderRight: isSmallScreen ? "0" : "1px solid gray",
+            paddingRight: isSmallScreen ? "0" : "30px",
+          }}
+        >
           <div style={{ textAlign: "center" }}>
             <img
               src={Logo}
               alt="Logo"
               style={{
-                width: isSmallScreen ? "30px" : "44px", // Adjust the width for mobile view
-                height: isSmallScreen ? "44.64px" : "65.76px",
+                width: isSmallScreen ? "30px" : "35px",
+                height: "auto",
                 position: "absolute",
-                top: "80px",
-                left: "108px",
+                top: isSmallScreen ? "20px" : "30px",
+                left: isSmallScreen ? "20px" : "30px",
                 transform: "none",
               }}
             />
@@ -246,25 +265,34 @@ const Dashboard = () => {
                 id="title"
                 label="Title"
                 variant="outlined"
-                style={{ width: "378px", height: "64px" }}
+                style={{
+                  width: isSmallScreen ? "auto" : "378px",
+                  height: "64px",
+                }}
               />
               <TextField
                 id="description"
                 label="Description"
                 variant="outlined"
-                style={{ width: "378px", height: "64px" }}
+                style={{
+                  width: isSmallScreen ? "auto" : "378px",
+                  height: "64px",
+                }}
               />
               <Button
                 variant="contained"
                 color="primary"
-                style={{ background: "rgba(89, 126, 247, 1)", width: "342px" }}
+                style={{
+                  background: "rgba(89, 126, 247, 1)",
+                  width: isSmallScreen ? "auto" : "342px",
+                }}
                 onClick={handleAddTask}
               >
                 Add
               </Button>
               <Button
                 variant="outlined"
-                style={{ width: "342px" }}
+                style={{ width: isSmallScreen ? "auto" : "342px" }}
                 onClick={handleSignOut}
               >
                 LOGOUT
@@ -276,7 +304,12 @@ const Dashboard = () => {
           item
           xs={12}
           sm={6}
-          sx={{ display: "flex", flexDirection: "column", gap: "30px" }}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "30px",
+            marginTop: isSmallScreen ? "30px" : "0px",
+          }}
         >
           <Typography
             variant="h4"
@@ -284,6 +317,7 @@ const Dashboard = () => {
             style={{
               fontSize: "25px",
               fontWeight: "700",
+              paddingLeft: isSmallScreen ? "20px" : "0px",
             }}
           >
             TODO LIST
@@ -294,6 +328,7 @@ const Dashboard = () => {
               container
               spacing={3}
               sx={{
+                display: isSmallScreen ? "flex" : "",
                 padding: "0 30px",
                 paddingRight: "30px",
                 justifyContent: "start",
@@ -303,7 +338,7 @@ const Dashboard = () => {
                 marginBottom: "20px",
               }}
             >
-              <Grid>
+              <Grid style={{ paddingLeft: isSmallScreen ? "10px" : "0px" }}>
                 <SearchComponent onSearch={handleSearch} />
               </Grid>
               <Grid>
@@ -331,6 +366,7 @@ const Dashboard = () => {
                     position: "relative",
                     borderBottom: "1px solid gray",
                     marginTop: "10px",
+                    padding: isSmallScreen ? "10px" : "0",
                   }}
                 >
                   <Typography
@@ -359,9 +395,6 @@ const Dashboard = () => {
                     >
                       <FavoriteIcon />
                     </IconButton>
-                    {/* <IconButton>
-                      <EditIcon />
-                    </IconButton> */}
                     <IconButton onClick={() => handleDeleteTask(task.id)}>
                       <DeleteIcon />
                     </IconButton>
@@ -393,6 +426,7 @@ const Dashboard = () => {
         vertical="bottom"
         horizontal="center"
         key={snackbarKey}
+        severity={snackbarSeverity}
       />
     </div>
   );

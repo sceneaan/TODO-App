@@ -2,7 +2,15 @@ import React, { useState, useEffect } from "react";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 
-const CustomSnackbar = ({ open, message, onClose, vertical, horizontal, snackbarKey  }) => {
+const CustomSnackbar = ({
+  open,
+  message,
+  onClose,
+  vertical,
+  horizontal,
+  snackbarKey,
+  severity,
+}) => {
   const [snackPack, setSnackPack] = useState([]);
   const [messageInfo, setMessageInfo] = useState(undefined);
 
@@ -17,9 +25,9 @@ const CustomSnackbar = ({ open, message, onClose, vertical, horizontal, snackbar
 
   useEffect(() => {
     if (open && message) {
-      setSnackPack((prev) => [...prev, { message, snackbarKey  }]);
+      setSnackPack((prev) => [...prev, { message, snackbarKey, severity }]);
     }
-  }, [open, message, snackbarKey]);
+  }, [open, message, snackbarKey, severity]);
 
   const handleSnackbarClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -40,7 +48,7 @@ const CustomSnackbar = ({ open, message, onClose, vertical, horizontal, snackbar
         elevation={6}
         variant="filled"
         onClose={handleSnackbarClose}
-        severity="success"
+        severity={severity}
       >
         {message}
       </MuiAlert>

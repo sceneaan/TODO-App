@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Grid,
   Typography,
@@ -12,16 +12,25 @@ import Logo from "../assets/logo.png";
 
 import { UserAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import CustomSnackbar from "../components/CustomSnackbar";
 
 const Login = () => {
   const { googleSignIn, user } = UserAuth();
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const navigate = useNavigate();
 
   const handleGoogleSignIn = async () => {
     try {
       await googleSignIn();
+      setSnackbarMessage("Login successful");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
     } catch (error) {
-      console.log(error);
+      setSnackbarMessage("Login failed. Please check your credentials.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
     }
   };
 
@@ -105,6 +114,15 @@ const Login = () => {
           </Grid>
         )}
       </Grid>
+      <CustomSnackbar
+        open={snackbarOpen}
+        message={snackbarMessage}
+        onClose={() => setSnackbarOpen(false)}
+        vertical="bottom"
+        horizontal="center"
+        snackbarKey={Date.now()}
+        severity={snackbarSeverity}
+      />
     </>
   );
 };
